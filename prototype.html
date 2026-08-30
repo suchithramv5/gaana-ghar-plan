@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaana Ghar Plan Prototype</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #15100C;
+            --card-color: #241B14;
+            --primary: #FF4B33;
+            --secondary: #F4B942;
+            --tertiary: #4FB8A6;
+            --text-primary: #F5EFE6;
+            --text-secondary: #A09890;
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #2b2b2b;
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            color: var(--text-primary);
+        }
+
+        /* Mobile Frame Container */
+        #phone-frame {
+            width: 375px;
+            height: 812px;
+            background-color: var(--bg-color);
+            border-radius: 40px;
+            border: 8px solid #333;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Status Bar Simulation */
+        .status-bar {
+            height: 44px;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 600;
+            z-index: 10;
+        }
+
+        /* Screen Management */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 60px 20px 30px 20px;
+            display: none;
+            flex-direction: column;
+            animation: fadeIn var(--transition-speed) ease-in-out;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Typography */
+        h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; line-height: 1.2; }
+        h2 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+        p { font-size: 14px; color: var(--text-secondary); margin: 0; line-height: 1.4; }
+
+        /* Shared Components */
+        .card {
+            background-color: var(--card-color);
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            padding: 18px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: auto;
+            text-align: center;
+            transition: transform 0.1s;
+        }
+
+        .btn-primary:active { transform: scale(0.98); }
+
+        .back-btn {
+            position: absolute;
+            top: 55px;
+            left: 20px;
+            cursor: pointer;
+            z-index: 100;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .header-label {
+            color: var(--primary);
+            text-transform: uppercase;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        /* Screen Specific Styles */
+        .hero-banner {
+            background: linear-gradient(135deg, #FF4B33 0%, #CC3C29 100%);
+            border-radius: 18px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .hero-banner h1 { color: white; }
+        .hero-banner p { color: rgba(255,255,255,0.8); }
+
+        .chip-row { display: flex; gap: 12px; margin-top: 16px; }
+        .chip {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            background: #33271D;
+            text-align: center;
+            font-weight: 600;
+            border: 2px solid transparent;
+            cursor: pointer;
+        }
+        .chip.selected {
+            border-color: var(--primary);
+            background: rgba(255, 75, 51, 0.1);
+        }
+
+        .input-card {
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1px solid #33271D;
+        }
+        .input-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
+        .input-value { font-size: 16px; font-weight: 500; }
+
+        .crossed-out {
+            border: 1px dashed #443a32;
+            opacity: 0.6;
+            text-decoration: line-through;
+            background: transparent;
+        }
+
+        .member-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #33271D;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 12px;
+        }
+
+        .stat-card {
+            border: 1px solid var(--secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        /* Utilities */
+        .text-gold { color: var(--secondary); }
+        .text-teal { color: var(--tertiary); }
+        .bg-teal { background-color: var(--tertiary); }
+        .bg-gray { background-color: #666; }
+        .mt-4 { margin-top: 16px; }
+    </style>
+</head>
+<body>
+
+    <div id="phone-frame">
+        <div class="status-bar">
+            <span id="status-time">9:41</span>
+            <span id="city-label" style="opacity: 0.7;"></span>
+            <div style="display:flex; gap: 4px;">
+                <span>📶</span><span>🔋</span>
+            </div>
+        </div>
+
+        <!-- SCREEN 1: Discovery -->
+        <section id="screen-1" class="screen active">
+            <div style="margin-bottom: 24px;">
+                <span style="font-weight: 900; font-size: 20px; letter-spacing: -1px;">gaana</span>
+            </div>
+            <div class="hero-banner">
+                <h1>One plan, every home you call family.</h1>
+                <p>Add anyone by name and number — not a pincode.</p>
+            </div>
+            <div class="card">
+                <p class="input-label">Now playing</p>
+                <h2 style="margin:0">Arijit Singh · Soulful</h2>
+            </div>
+            <div class="card">
+                <h2 style="margin:0">Made for you</h2>
+                <p>Weekly Mix, Daily 1 and more</p>
+            </div>
+            <button class="btn-primary" onclick="nav(2)">Create Ghar Plan →</button>
+        </section>
+
+        <!-- SCREEN 2: Build Plan -->
+        <section id="screen-2" class="screen">
+            <button class="back-btn" onclick="nav(1)">←</button>
+            <div class="header-label">Ghar Plan · Step 1 of 3</div>
+            <h1>How many people?</h1>
+            <p>2–5 members, including you</p>
+            
+            <div class="chip-row">
+                <div class="chip" onclick="selectMembers(3)">3</div>
+                <div class="chip selected" onclick="selectMembers(4)">4 ✓</div>
+                <div class="chip" onclick="selectMembers(5)">5</div>
+            </div>
+
+            <div class="card mt-4" style="border: 1px solid #3d2e22">
+                <h2 id="price-calc" class="text-gold">₹149 you + ₹39 × 3 = ₹266/mo</h2>
+                <p id="per-person-calc">≈ ₹67 per person</p>
+            </div>
+
+            <button class="btn-primary" onclick="nav(3)">Continue →</button>
+        </section>
+
+        <!-- SCREEN 3: Add Member -->
+        <section id="screen-3" class="screen">
+            <button class="back-btn" onclick="nav(2)">←</button>
+            <div class="header-label">Add member · Step 2 of 3</div>
+            <h1>Who's joining?</h1>
+            
+            <div class="card input-card">
+                <div class="input-label">Name</div>
+                <div class="input-value">Lakshmi Iyer</div>
+            </div>
+            <div class="card input-card">
+                <div class="input-label">Relation</div>
+                <div class="input-value">Mother</div>
+            </div>
+            <div class="card input-card">
+                <div class="input-label">Mobile number</div>
+                <div class="input-value">+91 98••• •• 214</div>
+            </div>
+            <div class="card input-card crossed-out">
+                <div class="input-label">Home address</div>
+                <div class="input-value">Not required</div>
+            </div>
+
+            <button class="btn-primary" onclick="nav(4)">Send invite →</button>
+        </section>
+
+        <!-- SCREEN 4: Member Onboarding -->
+        <section id="screen-4" class="screen">
+            <button class="back-btn" onclick="nav(3)">←</button>
+            <div class="hero-banner" style="margin-top: 20px;">
+                <h2 style="color:white; margin-bottom: 8px;">You're on Priya's Ghar Plan.</h2>
+                <p>Verify your number to start.</p>
+            </div>
+
+            <div class="card">
+                <div class="input-label">Enter OTP</div>
+                <div style="font-size: 24px; letter-spacing: 8px; font-weight: 700; margin-top: 8px;">6 2 8 1 0 4</div>
+            </div>
+
+            <div class="input-label" style="margin-top: 10px;">Select tastes</div>
+            <div class="chip-row">
+                <div class="chip selected">Devotional</div>
+                <div class="chip selected">Tamil hits</div>
+            </div>
+
+            <button class="btn-primary" onclick="nav(5)">Start listening →</button>
+        </section>
+
+        <!-- SCREEN 5: Owner Dashboard -->
+        <section id="screen-5" class="screen">
+            <button class="back-btn" onclick="nav(4)">←</button>
+            <div class="header-label">My Ghar Plan</div>
+            <h1>4 members</h1>
+
+            <div class="card" style="padding: 10px 20px;">
+                <div class="member-row">
+                    <div class="status-dot bg-teal"></div>
+                    <div>
+                        <div style="font-weight: 600;">Amma — Active</div>
+                        <div style="font-size: 12px; color: var(--text-secondary);">Coimbatore</div>
+                    </div>
+                </div>
+                <div class="member-row">
+                    <div class="status-dot bg-teal"></div>
+                    <div>
+                        <div style="font-weight: 600;">Karthik — Active</div>
+                        <div style="font-size: 12px; color: var(--text-secondary);">Pune</div>
+                    </div>
+                </div>
+                <div class="member-row" style="border:none">
+                    <div class="status-dot bg-gray"></div>
+                    <div>
+                        <div style="font-weight: 600;">Aunt Radha — Pending</div>
+                        <div style="font-size: 12px; color: var(--text-secondary);">Invite sent today</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card stat-card">
+                <div>
+                    <div class="input-label">Live now</div>
+                    <div style="font-weight: 700; font-size: 18px;">2 / 3 Streams</div>
+                </div>
+                <div class="text-gold" style="font-size: 24px;">🎧</div>
+            </div>
+
+            <button class="btn-primary" onclick="nav(6)">Swap a member →</button>
+        </section>
+
+        <!-- SCREEN 6: Receipt -->
+        <section id="screen-6" class="screen">
+            <button class="back-btn" onclick="nav(5)">←</button>
+            <div class="header-label">Receipt · August 2026</div>
+            <h1>Monthly Summary</h1>
+
+            <div class="card" style="border-left: 4px solid var(--secondary);">
+                <p class="input-label">Total billed</p>
+                <h2 class="text-gold">₹266.00 · <span style="font-size:14px; font-weight:400; color:white">One payment</span></h2>
+            </div>
+
+            <div class="card">
+                <div class="receipt-row">
+                    <span>You</span>
+                    <span class="text-teal">62 hrs</span>
+                </div>
+                <div class="receipt-row">
+                    <span>Amma</span>
+                    <span class="text-teal">41 hrs</span>
+                </div>
+                <div class="receipt-row">
+                    <span>Karthik</span>
+                    <span class="text-teal">12 hrs</span>
+                </div>
+            </div>
+
+            <div class="hero-banner" style="padding: 16px;">
+                <p style="color: white; font-weight: 500;">Amma listened to 4 hrs of Ilaiyaraaja this week. Send her a playlist?</p>
+            </div>
+
+            <button class="btn-primary" onclick="nav(1)">Done</button>
+        </section>
+    </div>
+
+    <script>
+        function nav(screenNum) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            
+            // Show target screen
+            const target = document.getElementById(`screen-${screenNum}`);
+            target.classList.add('active');
+
+            // Toggle city label on Screen 4
+            const cityLabel = document.getElementById('city-label');
+            if(screenNum === 4) {
+                cityLabel.innerText = "Coimbatore";
+            } else {
+                cityLabel.innerText = "";
+            }
+        }
+
+        function selectMembers(num) {
+            // Update UI Chips
+            const chips = document.querySelectorAll('.chip-row .chip');
+            chips.forEach(chip => {
+                if(parseInt(chip.innerText) === num) {
+                    chip.classList.add('selected');
+                    chip.innerHTML = num + ' ✓';
+                } else {
+                    chip.classList.remove('selected');
+                    chip.innerHTML = chip.innerText.replace(' ✓', '');
+                }
+            });
+
+            // Update Price
+            const base = 149;
+            const extraCount = num - 1;
+            const extraPrice = 39;
+            const total = base + (extraCount * extraPrice);
+            const perPerson = Math.round(total / num);
+
+            document.getElementById('price-calc').innerText = `₹${base} you + ₹${extraPrice} × ${extraCount} = ₹${total}/mo`;
+            document.getElementById('per-person-calc').innerText = `≈ ₹${perPerson} per person`;
+        }
+
+        // Live Clock
+        function updateTime() {
+            const now = new Date();
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            document.getElementById('status-time').innerText = hours + ':' + minutes;
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+    </script>
+</body>
+</html>
